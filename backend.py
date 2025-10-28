@@ -87,14 +87,23 @@ def return_book(mid, bid):
         return f"❌ Error returning book: {e}"
 
 def get_all_books():
-    MyCur.execute("SELECT * FROM books")
-    return MyCur.fetchall()
+    try:
+        MyCur.execute("SELECT * FROM books")
+        books = MyCur.fetchall()
+        return books
+    except:
+        return []
 
 def get_all_members():
-    MyCur.execute("SELECT * FROM members")
-    return MyCur.fetchall()
+    try:
+        MyCur.execute("SELECT * FROM members")
+        members = MyCur.fetchall()
+        return members
+    except:
+        return []
 
 
 create()
+
 
 
