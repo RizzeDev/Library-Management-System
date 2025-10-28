@@ -1,11 +1,9 @@
 import random
 import pymysql
 
-# --- Database Connection ---
-db = pymysql.connect(host="localhost", user="root", password="root17") 
+db = pymysql.connect(host="localhost", user="root", password="root17")  
 MyCur = db.cursor()
 
-# --- Database + Tables Creation ---
 def create():
     try:
         MyCur.execute("CREATE DATABASE IF NOT EXISTS Library")
@@ -38,8 +36,6 @@ def create():
 
 
 
-# Utility ID Generators
-
 def midgenerate():
     return chr(random.randint(65, 90)) + str(random.randint(100, 999))
 
@@ -48,41 +44,25 @@ def bidgenerate():
 
 
 
-# Core Database Functions 
+#CORE FUNCTIONS:
 
 def add_book(name, genre, price):
     try:
         bid = bidgenerate()
-        MyCur.execute("SELECT * FROM books WHERE bid=%s", (bid,))
-        if MyCur.fetchall() == ():
-            MyCur.execute("INSERT INTO books VALUES(%s, %s, %s, %s)", (bid, name, genre, price))
-            db.commit()
-            return f"✅ Book added successfully! Book ID: {bid}"
-        else:
-            return "⚠️ Book already exists!"
+        MyCur.execute("INSERT INTO books VALUES(%s, %s, %s, %s)", (bid, name, genre, price))
+        db.commit()
+        return f"✅ Book added successfully! Book ID: {bid}"
     except Exception as e:
         return f"❌ Error adding book: {e}"
 
 def add_member(name, age, memstatus):
     try:
         mid = midgenerate()
-        MyCur.execute("SELECT * FROM members WHERE mid=%s", (mid,))
-        if MyCur.fetchall() == ():
-            MyCur.execute("INSERT INTO members VALUES(%s, %s, %s, %s)", (mid, name, age, memstatus))
-            db.commit()
-            return f"✅ Member added successfully! Member ID: {mid}"
-        else:
-            return "⚠️ Member already exists!"
+        MyCur.execute("INSERT INTO members VALUES(%s, %s, %s, %s)", (mid, name, age, memstatus))
+        db.commit()
+        return f"✅ Member added successfully! Member ID: {mid}"
     except Exception as e:
         return f"❌ Error adding member: {e}"
-
-def renew_member(mid):
-    try:
-        MyCur.execute("UPDATE members SET Membership_Active='Y' WHERE mid=%s", (mid,))
-        db.commit()
-        return "✅ Membership renewed successfully!"
-    except Exception as e:
-        return f"❌ Error renewing member: {e}"
 
 def issue_book(mid, bid):
     try:
@@ -100,16 +80,6 @@ def return_book(mid, bid):
     except Exception as e:
         return f"❌ Error returning book: {e}"
 
-def check_availability(bid):
-    try:
-        MyCur.execute("SELECT * FROM issuedbooks WHERE bid=%s", (bid,))
-        if MyCur.fetchall() == ():
-            return "✅ Book is available!"
-        else:
-            return "❌ Book is currently issued!"
-    except Exception as e:
-        return f"⚠️ Error checking availability: {e}"
-
 def get_all_books():
     MyCur.execute("SELECT * FROM books")
     return MyCur.fetchall()
@@ -118,9 +88,6 @@ def get_all_members():
     MyCur.execute("SELECT * FROM members")
     return MyCur.fetchall()
 
-def get_all_issued():
-    MyCur.execute("SELECT * FROM issuedbooks")
-    return MyCur.fetchall()
-
 
 create()
+
