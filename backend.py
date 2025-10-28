@@ -1,7 +1,13 @@
 import random
 import pymysql
 
-db = pymysql.connect(host="localhost", user="root", password="root17")  
+db = pymysql.connect(
+    host="mysql-1234.railway.app",
+    user="myuser",
+    password="mypassword",
+    database="library"
+)
+
 MyCur = db.cursor()
 
 def create():
@@ -90,4 +96,5 @@ def get_all_members():
 
 
 create()
+
 
