@@ -1,119 +1,116 @@
 import streamlit as st
-import backend as bk
+import backend as bk 
 
-st.set_page_config(page_title="Library Management System", page_icon="📚", layout="wide")
+st.set_page_config(page_title="Library Management System 📚", layout="wide")
 
 st.title("📚 Library Management System")
-st.caption("Developed by Pratyush Upreti & Dhwani Verma | CBSE Project 2025")
+st.caption("A simple Python + MySQL project to manage books, members, and records.")
 
-# Sidebar navigation
-choice = st.sidebar.radio("Navigate", [
-    "Add Book", "Add Member", "Issue Book", "Return Book",
-    "Search Book", "Search Member",
-    "View All Books", "View All Members", "View Issued Books"
+
+if st.sidebar.button("ℹ️ About Project"):
+    st.sidebar.info("""
+    **Library Management System (CBSE Project 2025–26)**
+
+    **Programming Used**
+    - Python (Logic and Backend)
+    - MySQL (Database)
+    - Streamlit (User Interface)
+
+    **Developed By**
+    - Ritesh Pathak (Programmer)
+    - Pavitr Pandey (File Management)
+    - Viraj Garosa (File Management)
+
+    **Guide:** Ms. Deepshikha
+    
+    **Class & Subject:**  XII____(Computer Science - 083)
+
+    **School:** Amity International School, Mayur Vihar Phase 1, Delhi-110091
+    """)
+
+# Sidebar Navigation
+menu = st.sidebar.radio("Menu", [
+    "Add Book",
+    "Add Member",
+    "Issue Book",
+    "Return Book",
+    "View All Books",
+    "View All Members"
 ])
 
-# PAGE LOGIC 
 
-if choice == "Add Book":
+# Add Book Section
+if menu == "Add Book":
     st.subheader("➕ Add New Book")
-    name = st.text_input("Book Name")
-    genre = st.text_input("Genre")
-    price = st.number_input("Price (₹)", min_value=0, step=10)
-    if st.button("Add Book"):
-        if name and genre and price:
-            bid = bk.add_book(name, genre, int(price))
-            st.success(f"✅ Book '{name}' added successfully! Book ID: {bid}")
+    name = st.text_input("Enter Book Name")
+    genre = st.text_input("Enter Book Genre")
+    price = st.number_input("Enter Price (₹)", min_value=0)
+    if st.button("Save Book"):
+        if name and genre:
+            message = bk.add_book(name, genre, price)
+            st.success(message)
         else:
-            st.warning("⚠️ Please fill all fields before submitting.")
+            st.warning("Please fill all the details properly!")
 
-elif choice == "Add Member":
-    st.subheader("🧍 Add New Member")
-    name = st.text_input("Member Name")
-    age = st.number_input("Age", min_value=5, max_value=100, step=1)
-    memstatus = st.selectbox("Membership Active?", ["Y", "N"])
-    if st.button("Add Member"):
-        if name and age:
-            mid = bk.add_member(name, int(age), memstatus)
-            st.success(f"✅ Member '{name}' added successfully! Member ID: {mid}")
+
+# Add Member Section
+elif menu == "Add Member":
+    st.subheader("👤 Add New Member")
+    name = st.text_input("Enter Member Name")
+    age = st.number_input("Enter Member Age", min_value=5, max_value=120)
+    active = st.selectbox("Membership Active?", ["Y", "N"])
+    if st.button("Save Member"):
+        if name:
+            message = bk.add_member(name, age, active)
+            st.success(message)
         else:
-            st.warning("⚠️ Please fill all fields.")
+            st.warning("Member name cannot be blank!")
 
-elif choice == "Issue Book":
-    st.subheader("📖 Issue a Book")
-    mid = st.text_input("Member ID")
-    bid = st.text_input("Book ID")
+
+# Issue Book Section
+elif menu == "Issue Book":
+    st.subheader("🔖 Issue a Book")
+    member_id = st.text_input("Enter Member ID")
+    book_id = st.text_input("Enter Book ID")
     if st.button("Issue Book"):
-        if mid and bid:
-            bk.issue_book(mid, bid)
-            st.success("✅ Book issued successfully!")
+        if member_id and book_id:
+            message = bk.issue_book(member_id, book_id)
+            st.info(message)
         else:
-            st.warning("⚠️ Please enter both Member ID and Book ID.")
+            st.warning("Please enter both Member ID and Book ID!")
 
-elif choice == "Return Book":
-    st.subheader("🔁 Return a Book")
-    mid = st.text_input("Member ID")
-    bid = st.text_input("Book ID")
+
+# Return Book Section
+elif menu == "Return Book":
+    st.subheader("↩️ Return a Book")
+    member_id = st.text_input("Enter Member ID")
+    book_id = st.text_input("Enter Book ID")
     if st.button("Return Book"):
-        if mid and bid:
-            bk.return_book(mid, bid)
-            st.success("✅ Book returned successfully!")
+        if member_id and book_id:
+            message = bk.return_book(member_id, book_id)
+            st.success(message)
         else:
-            st.warning("⚠️ Please enter both Member ID and Book ID.")
+            st.warning("Please enter both Member ID and Book ID!")
 
-elif choice == "Search Book":
-    st.subheader("🔍 Search Book by ID")
-    bid = st.text_input("Enter Book ID")
-    if st.button("Search"):
-        data = bk.search_book(bid)
-        if data:
-            st.write("### 📘 Book Details:")
-            for row in data:
-                st.write(f"**Book ID:** {row[0]}")
-                st.write(f"**Name:** {row[1]}")
-                st.write(f"**Genre:** {row[2]}")
-                st.write(f"**Price:** ₹{row[3]}")
-        else:
-            st.warning("❌ No book found with that ID.")
 
-elif choice == "Search Member":
-    st.subheader("🔍 Search Member by ID")
-    mid = st.text_input("Enter Member ID")
-    if st.button("Search"):
-        data = bk.search_member(mid)
-        if data:
-            st.write("### 👤 Member Details:")
-            for row in data:
-                st.write(f"**Member ID:** {row[0]}")
-                st.write(f"**Name:** {row[1]}")
-                st.write(f"**Age:** {row[2]}")
-                st.write(f"**Membership Active:** {row[3]}")
-        else:
-            st.warning("❌ No member found with that ID.")
-
-elif choice == "View All Books":
-    st.subheader("📚 All Books in Library")
-    data = bk.all_books()
-    if data:
-        for i, row in enumerate(data, 1):
-            st.write(f"**{i}. {row[1]}** | ID: {row[0]} | Genre: {row[2]} | ₹{row[3]}")
+# View Books Section
+elif menu == "View All Books":
+    st.subheader("📖 All Books in the Library")
+    books = bk.get_all_books()
+    if books:
+        for book in books:
+            st.write(f"ID: {book[0]} | Name: {book[1]} | Genre: {book[2]} | Price: ₹{book[3]}")
     else:
-        st.warning("❌ No books found in library.")
+        st.warning("No books found in the database.")
 
-elif choice == "View All Members":
-    st.subheader("👥 All Members in Library")
-    data = bk.all_members()
-    if data:
-        for i, row in enumerate(data, 1):
-            st.write(f"**{i}. {row[1]}** | ID: {row[0]} | Age: {row[2]} | Active: {row[3]}")
-    else:
-        st.warning("❌ No members found in library.")
 
-elif choice == "View Issued Books":
-    st.subheader("📦 Issued Books")
-    data = bk.all_issued()
-    if data:
-        for i, row in enumerate(data, 1):
-            st.write(f"**{i}. Member ID:** {row[0]} | **Book ID:** {row[1]}")
+# View Members Section
+elif menu == "View All Members":
+    st.subheader("👥 All Library Members")
+    members = bk.get_all_members()
+    if members:
+        for i, m in enumerate(members, 1):
+            st.write(f"{i}. Name: {m[1]} | ID: {m[0]} | Age: {m[2]} | Active: {m[3]}")
     else:
-        st.warning("❌ No books currently issued.")
+        st.warning("No members found in the library records.")
+
