@@ -1,3 +1,2 @@
-random
-pymysql
 streamlit
+pymysql
